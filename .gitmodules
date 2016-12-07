@@ -1,0 +1,3 @@
+[submodule "dependencies"]
+	path = dependencies
+	url = ssh://git@gitlab.hollywant.com:10022/android/dependencies.git

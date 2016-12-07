@@ -1,0 +1,74 @@
+apply plugin: 'com.android.library'
+
+apply from: "${project.rootDir.getPath()}/dependencies/dependencies.gradle"
+
+android {
+    compileSdkVersion PROJECT_BUILD.compileSdkVersion
+    buildToolsVersion PROJECT_BUILD.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion PROJECT_BUILD.minSdkVersion
+        targetSdkVersion PROJECT_BUILD.targetSdkVersion
+        versionCode 1
+        versionName "0.0.1"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+    compile supportDependencies.appcompat
+    compile wantDependencies.log
+    compile wantDependencies.sdk
+    compile 'com.liulishuo.filedownloader:library:1.3.0'
+}
+
+
+//是否提交到仓库
+def upload = false
+def release = false
+def vername = android.defaultConfig.versionName
+
+if (upload) {
+    apply plugin: 'maven'
+
+    println('upload model: update to maven...')
+
+    group = 'com.want.model'
+    version = release ? vername : vername + '-SNAPSHOT'
+
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    artifacts {
+        archives androidSourcesJar
+        //当前aar 文件名
+        archives file('liba_update_b2b.aar')
+    }
+
+    uploadArchives {
+        repositories.mavenDeployer {
+            repository(url: MAVEN_R_URL) {
+                authentication(userName: MAVEN_D_USERNAME, password: MAVEN_D_PASSWORD)
+            }
+            snapshotRepository(url: MAVEN_S_URL) {
+                authentication(userName: MAVEN_D_USERNAME, password: MAVEN_D_PASSWORD)
+            }
+            pom.artifactId = "update-b2b"
+        }
+    }
+}
