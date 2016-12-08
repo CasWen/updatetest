@@ -15,11 +15,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
-
     dataBinding {
-        enabled true
+        enabled = true
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -34,7 +32,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile supportDependencies.appcompat
     compile wantDependencies.log
     compile project(':core_framework')
     compile 'com.liulishuo.filedownloader:library:1.3.0'
